@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Watching Dearborn</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&display=swap">
+<style>
+/* Layout: a coach's chalk talk. Each slide = an animated pitch (left / top) plus a plain-words card (right / below). Gold = Fenway, red = Dearborn. */
+:root{
+  --bg:#eef2ee; --card:#ffffff; --ink:#14201a; --muted:#56635b; --line:#d3dcd5;
+  --accent:#1d5a3a; --gold:#e8b931; --gold-ink:#7a5600; --red:#c8362c; --good:#1f7a45; --bad:#b3261e;
+  --grass1:#2f7d4a; --grass2:#2a7343; --chalk:rgba(255,255,255,.82);
+  --display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"Barlow",-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0d1410; --card:#152019; --ink:#e7eee9; --muted:#9aaa9f; --line:#283830;
+  --accent:#6cc995; --gold-ink:#e8c25a; --good:#5fc08a; --bad:#f08a80; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0d1410; --card:#152019; --ink:#e7eee9; --muted:#9aaa9f; --line:#283830;
+  --accent:#6cc995; --gold-ink:#e8c25a; --good:#5fc08a; --bad:#f08a80; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px 96px}
+.deck{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.top .brand{font-family:var(--display);font-weight:800;font-size:1.1rem;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.legend{display:flex;gap:14px;font-size:.9rem;color:var(--muted);flex-wrap:wrap}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+.slide{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:22px;align-items:start}
+@media (max-width:820px){.slide{grid-template-columns:minmax(0,1fr)}}
+.stagecol{display:flex;flex-direction:column;gap:10px;min-width:0;align-items:center}
+.stage{position:relative;width:100%;max-width:100%;border-radius:6px;overflow:hidden;background:var(--grass2);box-shadow:0 1px 0 var(--line)}
+.stage svg{display:block;width:100%;height:100%}
+.tag{position:absolute;transform:translate(-50%,-50%);font-family:var(--display);font-weight:700;font-size:clamp(.72rem,1.7vw,.98rem);
+  line-height:1.1;padding:3px 8px;border-radius:3px;white-space:nowrap;pointer-events:none;transition:opacity .25s;opacity:0;
+  background:rgba(12,24,17,.86);color:#fff;letter-spacing:.02em}
+.tag.d{background:#c8362c;color:#fff}
+.tag.f{background:#e8b931;color:#1c1400}
+.tag.on{opacity:1}
+.pill{position:absolute;right:10px;top:10px;font-family:var(--display);font-weight:800;font-size:clamp(.85rem,2vw,1.15rem);letter-spacing:.08em;
+  text-transform:uppercase;padding:3px 10px;border-radius:3px;color:#fff;opacity:0;transition:opacity .25s}
+.pill.on{opacity:1}
+.pill.bad{background:#b3261e}.pill.good{background:#1f7a45}
+.cap{min-height:3.1em;width:100%;font-size:1.05rem;font-weight:500;background:var(--card);border:1px solid var(--line);padding:10px 14px;border-radius:4px}
+.ctrl{display:flex;gap:8px;align-items:center;width:100%;flex-wrap:wrap}
+.ctrl input[type=range]{flex:1;min-width:120px;accent-color:var(--accent)}
+button{font-family:var(--display);font-weight:700;font-size:1rem;letter-spacing:.04em;text-transform:uppercase;border:1px solid var(--line);
+  background:var(--card);color:var(--ink);padding:7px 14px;border-radius:4px;cursor:pointer;min-height:40px}
+button:hover{border-color:var(--accent)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.pri{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+button[aria-pressed=true]{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.text{display:flex;flex-direction:column;gap:14px;min-width:0}
+.kick{font-family:var(--display);font-weight:700;font-size:.9rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+h1,h2{font-family:var(--display);margin:0;line-height:1.02;text-wrap:balance;text-transform:uppercase}
+h1{font-size:clamp(2.4rem,6vw,3.6rem);font-weight:800}
+h2{font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800}
+p{margin:0}
+.lead{font-size:1.1rem}
+.blk{display:flex;flex-direction:column;gap:6px}
+.blk h3{margin:0;font-family:var(--display);font-size:1rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.blk ul{margin:0;padding-left:1.15em;display:flex;flex-direction:column;gap:5px}
+.yell{align-self:flex-start;font-family:var(--display);font-weight:800;font-size:1.6rem;text-transform:uppercase;letter-spacing:.02em;
+  border:2px solid var(--gold);background:color-mix(in srgb,var(--gold) 18%,var(--card));color:var(--ink);padding:4px 14px;border-radius:3px}
+.yell small{display:block;font-family:var(--body);font-weight:500;font-size:.8rem;text-transform:none;letter-spacing:0;color:var(--muted)}
+.word{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--gold);padding:8px 12px;border-radius:3px}
+.word b{font-family:var(--display);font-size:1.1rem;text-transform:uppercase;letter-spacing:.02em}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:12px}
+.cards .c{background:var(--card);border:1px solid var(--line);padding:14px 16px;border-radius:4px;display:flex;flex-direction:column;gap:6px}
+.cards .c b{font-family:var(--display);font-size:1.4rem;text-transform:uppercase;color:var(--accent)}
+.gloss{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:10px}
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--card);border-top:1px solid var(--line);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-top:10px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))}
+.nav .in{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:10px}
+.dots{flex:1;display:flex;gap:5px;justify-content:center;flex-wrap:wrap}
+.dots button{width:12px;height:12px;min-height:0;padding:0;border-radius:50%;background:var(--line);border:0}
+.dots button[aria-current=true]{background:var(--accent);width:26px;border-radius:6px}
+.count{font-family:var(--display);font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;min-width:3.2em;text-align:center}
+@media (prefers-reduced-motion:reduce){.tag,.pill{transition:none}}
+</style>
+</head>
+<body>
+
+<div class="deck">
+  <div class="top">
+    <span class="brand"><a href="./" style="color:inherit;text-decoration:none">‹ Know Dearborn</a> · what to watch</span>
+    <span class="legend"><span><i style="background:#e8b931"></i>Fenway (us)</span><span><i style="background:#c8362c"></i>Dearborn</span><span><i style="background:#fff;border:1px solid #889"></i>Ball</span></span>
+  </div>
+  <div class="slide" id="slide">
+    <div class="stagecol" id="stagecol">
+      <div class="stage" id="stage"><svg id="svg" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg><div class="pill" id="pill"></div></div>
+      <div class="cap" id="cap" aria-live="polite"></div>
+      <div class="ctrl">
+        <button id="play" aria-pressed="false">Pause</button>
+        <button id="replay">Replay</button>
+        <button id="slow" aria-pressed="false">Slow</button>
+        <input type="range" id="scrub" min="0" max="100" step="0.1" value="0" aria-label="Scrub the play">
+      </div>
+    </div>
+    <div class="text" id="text"></div>
+  </div>
+</div>
+<nav class="nav"><div class="in">
+  <button id="prev">‹ Back</button>
+  <div class="dots" id="dots"></div>
+  <span class="count" id="count"></span>
+  <button id="next" class="pri">Next ›</button>
+</div></nav>
+
+<script>
+(function(){
+/* ---------- field + data helpers ---------- */
+// Field coordinates: x 0..105 (our goal at x=0, theirs at x=105), y 0..68 (top sideline = 0).
+const FB={0:[4,34],14:[20,9],2:[20,26],3:[20,42],5:[20,59],8:[32,24],21:[32,44],7:[44,10],10:[44,34],24:[44,58],9:[56,34]};
+const F=(n,keys,o)=>Object.assign({n:String(n),t:'f',k:keys},o||{});
+const D=(n,keys,o)=>Object.assign({n:String(n),t:'d',k:keys},o||{});
+const B=(keys)=>({n:'',t:'b',k:keys});
+const S=(x,y)=>[[0,x,y]];
+const FULL=[-3,-3,111,74];
+
+/* ---------- scenes ---------- */
+const SC={};
+
+SC.title={view:FULL,dur:5,ents:(()=>{
+  const e=[];
+  for(const n in FB){const [x,y]=FB[n]; e.push(F(n,S(x*0.82,y)));}
+  const lab={0:'',14:'18',2:'6',3:'',5:'',8:'2',21:'',7:'7',10:'8',24:'9',9:'10'};
+  for(const n in FB){const [x,y]=FB[n]; e.push(D(lab[n],S(105-x*0.82,68-y)));}
+  e.push(B([[0,52.5,34],[1.4,38,34],[2.6,38,34],[4,52.5,34],[5,52.5,34]]));
+  return e;})(),
+  cap:[[0,'Gold is us, red is Dearborn. Each slide plays a short clip on a loop.']]};
+
+SC.basics={view:FULL,dur:11,still:9,ents:[
+  F(0,S(...FB[0]),{in:.3}),
+  F(14,S(...FB[14]),{in:1.5}),F(2,S(...FB[2]),{in:1.6}),F(3,S(...FB[3]),{in:1.7}),F(5,S(...FB[5]),{in:1.8}),
+  F(8,S(...FB[8]),{in:3.5}),F(21,S(...FB[21]),{in:3.6}),
+  F(7,S(...FB[7]),{in:5.5}),F(10,S(...FB[10]),{in:5.6}),F(24,S(...FB[24]),{in:5.7}),F(9,S(...FB[9]),{in:5.8})],
+  tags:[[.3,11,'Our goal',4,24,''],[1.5,11,'Back line: 4 defenders',20,66,''],[3.5,11,'Holding mids',32,52.5,'f'],
+        [5.5,11,'Wingers',44,3,''],[5.5,11,'Striker',56,27,''],[7.5,11,'We attack this way',80,9,'f']],
+  arrows:[[7.5,11,62,4,98,4,'f']],
+  cap:[[0,'This is us. We defend the goal on the left and attack to the right.'],
+       [1.5,'The back line: 4 defenders. The two in the middle are center backs. The two on the edges are fullbacks.'],
+       [3.5,'Johann (8) and Juvens (21) sit right in front of the defense. Coaches call that the holding mid, or "the #6 job."'],
+       [5.5,'Up front: wingers on each side (Jailin 7, Brown 24), Jayc (10) in the middle, Lucas (9) up top as the striker.'],
+       [8,'That shape is the 4-3-3 on our scouting page: 4 defenders, then the middle, then 3 attackers.']]};
+
+const D433={GK:[101,34],r18:[74,9],r6:[80,26],ra:[80,42],rb:[74,59],r2:[62,22],r8:[58,34],rc:[62,46],r9:[46,14],r10:[44,34],r7:[46,54]};
+const D352={GK:[101,34],r18:[62,8],r6:[84,22],ra:[86,34],rb:[84,46],r2:[68,24],r8:[60,34],rc:[62,60],r9:[46,40],r10:[46,28],r7:[68,44]};
+const DLAB={GK:'',r18:'18',r6:'6',ra:'',rb:'',r2:'2',r8:'8',rc:'',r9:'9',r10:'10',r7:'7'};
+SC.shape={view:FULL,dur:11.5,still:8,ents:Object.keys(D433).map(k=>D(DLAB[k],[[0,...D433[k]],[4.2,...D433[k]],[5.8,...D352[k]],[11.5,...D352[k]]])),
+  zones:[[.8,4.2,'rect',71,4,12,60,'d'],[6.2,11.5,'rect',80.5,16,9.5,36,'d']],
+  tags:[[.8,4.2,'4 across the back = 4-3-3',77,66,'d'],[6.2,11.5,'3 across the back = 3-5-2',85,59,'d'],[7.4,11.5,'Wing-back runs the whole side',40,3,'d']],
+  arrows:[[7.4,11.5,58,8,22,8,'d'],[7.4,11.5,58,60,22,60,'d']],
+  cap:[[0,'This is Dearborn. They attack to the left, toward our goal.'],
+       [.8,'Count the players across their back line. Four means a 4-3-3.'],
+       [5.8,'Three at the back means a 3-5-2. Their wide players, the wing-backs, run up and down the whole sideline.'],
+       [8.4,'If it\'s the 3-5-2, there is open space behind those wing-backs when they push up. That\'s where we attack.']]};
+
+function blk(n,line){const y=FB[n][1];const C={D:26,M:34,A:42,S:50}[line],X={D:14,M:40,A:54,S:66}[line];
+  return F(n,[[0,C,y],[1.6,C,y-5],[3.1,C,y+5],[4.6,C,y],[5.2,C,y],[6.2,X,y],[11,X,y]]);}
+SC.lines={view:FULL,dur:11,still:8.2,ents:[
+  F(0,S(4,34)),blk(14,'D'),blk(2,'D'),blk(3,'D'),blk(5,'D'),blk(8,'M'),blk(21,'M'),blk(7,'A'),blk(10,'A'),blk(24,'A'),blk(9,'S'),
+  D('2',S(68,18)),D('',S(68,50)),D('8',[[0,64,34],[5.6,64,34],[8,30,34],[11,30,34]]),D('',S(101,34)),
+  B([[0,62.5,34],[1.6,66.5,18],[3.1,66.5,50],[4.6,62.5,34],[5.6,62.5,34],[8,28.5,34],[11,28.5,34]])],
+  zones:[[6.6,11,'rect',16,12,22,44,'d']],
+  pills:[[0,5,'good','Good'],[5.6,11,'bad','Bad']],
+  tags:[[.4,5,'Short gaps, moves as one',34,66,''],[6.6,11,'Big gap',27,9,'d']],
+  cap:[[0,'Good: we stay in three close lines, like one block, and slide together toward the ball.'],
+       [5.6,'Bad: the attackers chase forward and the defenders stay back. A big gap opens in the middle.'],
+       [6.8,'Their #8 walks right into the gap with the ball, and our defense faces him with no help.'],
+       [9,'When you see that gap, yell LINES! Everyone squeezes back together.']]};
+
+SC.eight={view:FULL,dur:12.5,still:8.4,ents:[
+  F(0,S(4,34)),F(14,S(20,9)),F(2,[[0,20,26],[3.4,17,24],[6,20,26]]),F(3,S(20,42)),F(5,S(20,59)),
+  F(8,[[0,32,26],[1.6,52,24],[5,52,24],[6,30,32],[7.8,30,32],[8.3,28.6,33.6],[12.5,28.6,33.6]]),
+  F(21,S(32,44)),F(7,S(44,10)),F(10,S(44,34)),F(24,S(44,58)),F(9,S(56,34)),
+  D('2',S(62,20)),D('8',[[0,58,34],[2.2,27,35],[3.4,27,35],[6,58,34],[7.8,27,36],[8.6,27,36],[10,34,38],[12.5,34,38]]),
+  D('10',[[0,38,18],[2.6,38,18],[3.4,8,22],[5,8,22],[6,38,18],[12.5,38,18]]),
+  B([[0,61,21],[1.8,61,21],[2.6,28.4,35],[3.4,8.8,22.4],[5,8.8,22.4],[6,61,21],[7.4,61,21],[8.2,28.4,36],[8.8,30,36.5],[10.4,61,21],[12.5,61,21]])],
+  pills:[[0,5.2,'bad','Bad'],[6,12.5,'good','Good']],
+  zones:[[1.8,5,'circle',27,35,6,0,'d']],
+  arrows:[[2.6,5,28,35,10,22.5,'d']],
+  tags:[[1.6,5,'Holding mid chased the ball',52,31,'f'],[2.7,5,'First-time ball in behind',18,15,'d'],
+        [6.4,8,'Stay in front of the back 4',30,40,'f'],[8.3,12.5,'Right on him',28,27,'f']],
+  cap:[[0,'Watch their #8. He looks for space right in front of our defense.'],
+       [1.6,'Our holding mid runs off to chase the ball. Now there is room behind him.'],
+       [2.6,'#8 gets it and passes first time, no extra touch, to a runner behind our defense.'],
+       [5.6,'The right way:'],[6.2,'Our holding mid stays home, in front of the back 4.'],
+       [8.2,'When the ball goes to #8, our guy is right on him. #8 has to pass it backward. Danger over.']]};
+
+SC.delay={view:[-2,-3,78,44],dur:12.5,still:10,ents:[
+  F(0,S(3,30)),F(2,S(20,26)),F(3,S(20,40)),
+  F(14,[[0,24,9],[1.4,45,7],[1.7,44,5.5],[3.6,34,8],[5.2,30,9],[6,24,9],[7,33,9],[8.5,36,8],[9.6,36,7],[10.4,34,9],[12.5,34,9]]),
+  F(7,[[0,52,14],[6,52,14],[7,52,14],[9.5,40,8.2],[10.4,38,10],[12.5,38,10]]),
+  D('18',[[0,64,6],[1.5,48,6],[1.8,45,3],[2.4,36,4],[3.6,15,5],[5.2,15,5],[6,64,6],[7.5,50,6],[8.5,42,6],[9.6,39,5.5],[12.5,39,5.5]]),
+  D('9',[[0,32,32],[3.6,30,32],[4.5,9,30],[5.2,9,30],[6,32,32],[12.5,32,32]]),
+  B([[0,62.5,6.5],[1.5,46.5,6.5],[1.7,46,6],[2.4,34,4.5],[3.6,13.5,5.5],[3.8,13.5,5.5],[4.5,10,29.5],[5.2,10,29.5],[6,62.5,6.5],[7.5,48.5,6.5],[8.5,40.6,6.5],[9.6,38,6.2],[10.4,34.5,10.5],[12.5,34.5,10.5]])],
+  pills:[[0,5.2,'bad','Bad'],[6,12.5,'good','Good']],
+  tags:[[1.4,3.2,'Dives in',44,13,'f'],[2.2,4,'#18 is gone',28,12,'d'],
+        [7,9.6,'Delay: stay between him and our goal',30,17,'f'],[8.6,10.3,'Help is coming',54,20,'f'],[9.8,12.5,'Trapped at the sideline',38,23,''] ],
+  cap:[[0,'Their #18 is fast. Watch what happens when our fullback dives in.'],
+       [1.6,'He lunges. #18 pushes the ball past him and runs away from him.'],
+       [3.7,'Now #18 crosses it into the box. Big chance for them.'],
+       [5.6,'The right way:'],[6.2,'Our fullback backs off and stays between #18 and our goal. That\'s called delay.'],
+       [8.6,'He\'s waiting for help. Our winger sprints back.'],
+       [9.8,'Two on one, pinned against the sideline. We win the ball.']]};
+
+SC.trans={view:FULL,dur:8,still:4.3,ents:[
+  F(0,S(10,34)),
+  F(14,[[0,44,9],[1.2,44,9],[4,16,18]]),F(2,[[0,44,26],[1.2,44,26],[4.2,13,31],[8,13,31]]),F(3,[[0,44,42],[1.2,44,42],[4,14,40]]),F(5,[[0,44,59],[1.2,44,59],[4,16,52]]),
+  F(8,[[0,58,26],[1.2,58,26],[4.6,30,26]]),F(21,[[0,58,44],[1.2,58,44],[4.6,30,44]]),
+  F(7,[[0,72,10],[1.4,72,10],[5,50,14]]),F(10,[[0,70,34],[1.2,70,34],[5,52,34]]),F(24,[[0,72,58],[1.4,72,58],[5,50,54]]),F(9,[[0,82,34],[1.6,82,34],[5,64,36]]),
+  D('8',[[0,76,37],[1,72.5,35.5],[8,72.5,35.5]]),
+  D('9',[[0,62,12],[1.2,62,12],[4.5,18,20]]),D('10',[[0,64,30],[1.2,64,30],[4.4,17,34]]),D('7',[[0,62,56],[1.2,62,56],[4.5,18,50]]),D('2',[[0,66,44],[1.2,66,44],[4.5,30,42]]),
+  D('',S(90,26)),D('',S(90,42)),D('',S(101,34)),
+  B([[0,71.5,34],[1,73,35.5],[2.6,73,35.5],[4.3,14,32],[4.6,14,32],[5.6,40,64],[8,40,64]])],
+  arrows:[[1.3,3.4,60,12,24,19,'d'],[1.3,3.4,62,30,23,33,'d'],[1.3,3.4,60,56,24,50,'d'],[2.6,4.3,71,35,17,32.5,''],[1.6,4.4,40,62,18,62,'f']],
+  tags:[[.8,2.4,'We lose it',73,44,'d'],[1.8,4.4,'SPRINT back',30,66,'f'],[4.4,8,'Cleared',38,57,'f']],
+  cap:[[0,'We have the ball high up the field.'],
+       [1,'We lose it. Dearborn sends 3 or 4 runners right away.'],
+       [2.6,'Their #8 plays a long pass into the space behind our defense. That\'s a through ball.'],
+       [3.2,'Everyone sprints back and stays goal side: between their runner and our goal.'],
+       [4.6,'Our defender gets there first and clears it. That\'s what you want to see.']]};
+
+SC.pinch={view:[-3,-3,74,74],dur:11.5,still:8.6,ents:[
+  F(0,S(3,34)),
+  F(2,[[0,22,26],[1.3,30.5,25],[5,30.5,25],[6,22,26],[7.3,30.5,25],[11.5,30.5,25]]),
+  F(14,[[0,22,10],[6,22,10],[7.6,20,17],[11.5,20,17]]),
+  F(3,[[0,22,42],[6,22,42],[7.8,17,29],[8.5,15.6,27.4],[11.5,15.6,27.4]]),
+  F(5,[[0,22,58],[6,22,58],[7.8,21,46],[11.5,21,46]]),
+  F(8,S(34,30)),F(21,S(36,46)),F(24,[[0,46,58],[6,46,58],[8,32,52],[11.5,32,52]]),
+  D('2',S(60,20)),D('10',[[0,44,26],[1.2,34,24.5],[5,34,24.5],[6,44,26],[7.2,34,24.5],[11.5,34,24.5]]),
+  D('9',[[0,30,38],[1.6,30,38],[2.6,14,26],[5,14,26],[6,30,38],[7.6,30,38],[8.6,17,28],[11.5,17,28]]),
+  B([[0,59,20.5],[0.4,59,20.5],[1.3,33,24.2],[1.6,33,24.2],[2.6,14.4,26.4],[5,14.4,26.4],[6,59,20.5],[6.4,59,20.5],[7.3,33,24.2],[7.6,33,24.2],[8.5,16,27.4],[8.9,16,27.4],[10,40,4],[11.5,40,4]])],
+  pills:[[0,5.2,'bad','Bad'],[6,11.5,'good','Good']],
+  zones:[[1.5,5,'circle',17,26,5.5,0,'d']],
+  tags:[[1.2,3,'Steps up',30,18,'f'],[1.7,5,'The hole',15,18,'d'],[7.5,11.5,'Everyone pinches in',18,62,'f'],[8,11.5,'Weak side winger helps',40,62,'']],
+  cap:[[0,'Ish, our center back, steps up to challenge their #10.'],
+       [1.6,'Bad: nobody slides over. Look at the hole he left behind him.'],
+       [2.6,'Their #9 runs into the hole. Goal chance.'],
+       [5.6,'The right way:'],[6.4,'When a center back steps up, the rest of the back line pinches in, sliding toward the middle.'],
+       [7.8,'The hole is covered. The weak side winger, the one on the far side from the ball, drops back to help.'],
+       [8.8,'We win it and clear it.']]};
+
+SC.corner={view:[-3,-3,48,62],dur:12.5,still:9.8,ents:[
+  F(0,S(1.8,34)),
+  D('',S(0.8,0.8)),
+  D('8',[[0,11,6],[0.9,5,3],[2.6,5,3],[4,8,8],[6,11,6],[6.9,5,3],[12.5,5,3]]),
+  D('',[[0,18,18],[1.2,18,18],[2.6,6,27],[6,18,18],[7.2,18,18],[8.6,6,27],[12.5,6,27]]),
+  D('',[[0,20,28],[1.2,20,28],[2.6,5,33],[6,20,28],[7.2,20,28],[8.6,5,33],[12.5,5,33]]),
+  D('',[[0,19,40],[1.2,19,40],[2.6,6,40],[6,19,40],[7.2,19,40],[8.6,6,40],[12.5,6,40]]),
+  D('10',[[0,28,36],[2.4,28,36],[3.3,19.5,33],[6,28,36],[8.4,28,36],[9.3,19.5,33],[12.5,19.5,33]]),
+  F(2,[[0,16.5,19],[1.2,16.5,19],[2.6,4.6,26.6],[6,16.5,19],[7.2,16.5,19],[8.6,4.6,26.6],[12.5,4.6,26.6]]),
+  F(3,[[0,18.5,29.5],[1.2,18.5,29.5],[2.6,3.6,32],[6,18.5,29.5],[7.2,18.5,29.5],[8.6,3.6,32],[12.5,3.6,32]]),
+  F(5,[[0,17.5,41.5],[1.2,17.5,41.5],[2.6,4.6,41.2],[6,17.5,41.5],[7.2,17.5,41.5],[8.6,4.6,41.2],[12.5,4.6,41.2]]),
+  F(14,S(8,10)),
+  F(8,[[0,34,24],[5,34,24],[6,21,29],[8.6,21,29],[9.5,17.2,32.5],[12.5,17.2,32.5]]),
+  B([[0,0.9,0.9],[0.4,0.9,0.9],[1.1,5.4,3.6],[2.6,5.4,3.6],[3.4,18.4,32.8],[3.6,18.4,32.8],[4.2,0.2,35],[6,0.9,0.9],[6.4,0.9,0.9],[7.1,5.4,3.6],[8.6,5.4,3.6],[9.4,18.4,32.8],[9.6,18.4,32.8],[9.75,17.6,32.6],[10.6,34,18],[12.5,34,18]])],
+  pills:[[0,5.2,'bad','Bad'],[6,12.5,'good','Good']],
+  zones:[[2.6,5,'rect',16.5,26,5,14,'d'],[6.4,12.5,'rect',16.5,26,5,14,'f']],
+  arrows:[[1.4,2.8,18,16,8,26,'d'],[1.4,2.8,20,26,8,32,'d'],[1.4,2.8,19,42,8,40,'d']],
+  tags:[[.4,2.4,'Short to #8',14,1,'d'],[1.4,3,'Everyone crashes the box',13,58,'d'],[2.7,5,'Back to the top of the 18',30,46,'d'],[4,5.4,'Nobody there: goal',10,46,''],
+        [6.4,9.3,'One of ours stays here',30,46,'f'],[9.8,12.5,'Blocked',28,24,'f']],
+  cap:[[0,'Their favorite set piece. The corner is passed short to #8 instead of crossed in.'],
+       [1.3,'Their players crash the box. Ours follow them and mark them tight.'],
+       [2.6,'#8 plays it back to the top of the 18, the front edge of the big box, for a shot.'],
+       [3.6,'Nobody stayed there. Easy shot.'],
+       [5.6,'The right way:'],[6.4,'One of our players stays at the top of the box the whole time, no matter what.'],
+       [9.6,'Shot blocked. That one player makes the whole difference.']]};
+
+SC.throw={view:[-3,-3,44,62],dur:10,still:7,ents:[
+  F(0,S(1.8,33)),
+  D('',S(14,-0.6)),
+  D('',S(9,9)),D('',[[0,9,12.5],[1.2,8,13],[5,9,12.5],[6.2,8,13],[10,8,13]]),D('',S(9,16)),
+  D('9',[[0,16,40],[1.4,16,40],[2.2,4,42],[5,4,42],[6.6,16,40],[7.4,9,41],[10,9,41]]),
+  F(2,S(7,13.5)),F(3,S(7,19)),F(14,S(11,25)),
+  F(5,[[0,20,46],[5,20,46],[5.2,4.2,44],[10,4.2,44]]),
+  B([[0,14,0.4],[0.5,14,0.4],[1.2,8.4,12.4],[2.1,3.6,42.4],[2.6,0.2,36],[5,0.2,36],[5.2,14,0.4],[5.7,14,0.4],[6.4,8.4,12.4],[7.3,3.8,43],[8.2,22,58],[10,22,58]])],
+  pills:[[0,4.8,'bad','Bad'],[5.2,10,'good','Good']],
+  zones:[[.2,2,'rect',6.5,7,5,11.5,'d'],[5.4,10,'circle',4,43,4.5,0,'f']],
+  arrows:[[1.2,2.6,8.6,13,4.2,41,'d']],
+  tags:[[.2,2,'3 in a line',22,12,'d'],[1.3,2.6,'Flick-on',17,26,'d'],[2.3,4.8,'Back post: tap-in',16,50,''],[5.4,10,'Back post: CLEAR it',20,52,'f']],
+  cap:[[0,'Long throw-in. Three of their players stand in a line near the front of the goal.'],
+       [1.2,'The first one flicks it on with his head toward the back post, the far side of the goal.'],
+       [2.2,'If nobody is at the back post, it\'s an easy tap-in.'],
+       [5.2,'The right way: one of ours waits at the back post and kicks it away. Clear it, don\'t try to play it.']]};
+
+SC.attack={view:[44,-3,64,74],dur:8,still:3.5,ents:[
+  F(21,[[0,58,42],[8,58,42]]),
+  F(24,[[0,64,58],[1.3,70,60],[2.8,90,62],[8,90,62]]),
+  F(7,[[0,70,10],[1.6,72,12],[2.6,86,22],[3.4,95.5,31.6],[8,95.5,31.6]]),
+  F(9,[[0,80,34],[2.4,92,38],[8,92,38]]),F(10,[[0,70,30],[3,80,34]]),
+  D('',[[0,88,12],[2.6,88,18]]),D('',[[0,90,28],[2.6,92,32]]),D('',[[0,90,40],[2.6,91,44]]),D('',[[0,88,56],[2.6,88,60]]),
+  D('',[[0,101,34],[3.6,101,33],[4,101,30]]),D('',S(74,22)),D('',S(74,40)),
+  B([[0,59.5,42],[0.5,59.5,42],[1.3,70.5,59],[2.8,90.5,60.8],[3,90.5,60.8],[3.4,96.5,32.4],[3.6,96.5,32.4],[4,105.4,35],[8,105.4,35]])],
+  arrows:[[.4,1.4,60,44,69,58,'f'],[1.4,2.8,72,63,88,63,'f'],[1.6,3.4,71,9,94,29,'f'],[2.8,3.5,90,59,96,34,'f']],
+  tags:[[.6,2.6,'Get it wide',68,67,'f'],[1.7,3.6,'Weak side winger comes in',80,4,'f'],[3.6,8,'Keep it low: GOAL',92,46,'f']],
+  cap:[[0,'Our attack. Step 1: get the ball wide, out to a winger.'],
+       [1.4,'The winger runs at them down the sideline.'],
+       [1.8,'Watch the weak side winger, the one on the far side. He cuts in toward the goal.'],
+       [2.8,'Pass it across into the space in front of the goal.'],
+       [3.6,'Shoot low. Low shots are the hardest for a keeper to stop.']]};
+
+/* ---------- slides ---------- */
+const SL=[
+ {s:'title',h:`<span class="kick">Thu 11/12 · 4:00 · Rotch Field</span><h1>What to watch vs Dearborn</h1>
+   <p class="lead">Ten short clips. Each one shows something Dearborn does, or something we need to do, and what it looks like when it goes right and wrong.</p>
+   <div class="blk"><h3>How to use it</h3><ul><li>Each clip loops. Use <b>Slow</b> or drag the bar to look closely.</li><li>The caption under the field tells you what's happening.</li><li>The gold box on each slide is what to yell from the sideline.</li><li>Arrow keys or the buttons at the bottom move between slides.</li></ul></div>`},
+ {s:'basics',h:`<span class="kick">Start here</span><h2>Who's where on our team</h2>
+   <p class="lead">Soccer teams line up in rows, back to front. People call each row a "line."</p>
+   <div class="blk"><h3>Look for</h3><ul><li>Defenders in the back, midfield in the middle, attackers in front.</li><li>Johann and Juvens are the two right in front of the defense. Their main job is protecting it.</li></ul></div>
+   <div class="word"><b>Formation</b> · the shape a team lines up in, counted back to front. "4-3-3" means 4 defenders, 3 midfielders, 3 attackers.</div>`},
+ {s:'shape',h:`<span class="kick">First 10 minutes</span><h2>What shape is Dearborn in?</h2>
+   <p class="lead">Our scouting says they play a 4-3-3, but they might switch to a 3-5-2. You can tell in the first few minutes.</p>
+   <div class="blk"><h3>Look for</h3><ul><li>When we have the ball, count their players across the back. 4 or 3?</li><li>If it's 3, their wide players run the whole sideline. Tell our wingers to attack the space behind them.</li></ul></div>
+   <div class="yell">"Run in behind!"<small>if it's the 3-5-2</small></div>`},
+ {s:'lines',h:`<span class="kick">All game</span><h2>Lines together</h2>
+   <p class="lead">The single biggest thing. When we defend, our three rows stay close, like one block that slides side to side.</p>
+   <div class="blk"><h3>Look for</h3><ul><li>A big empty space between our defenders and our midfield. That's the danger.</li><li>Attackers chasing the ball alone while everyone else stays back.</li></ul></div>
+   <div class="word"><b>Compact</b> · players close together, no big gaps.</div>
+   <div class="yell">"Lines!"<small>everyone squeeze together</small></div>`},
+ {s:'eight',h:`<span class="kick">Their key player</span><h2>Their #8</h2>
+   <p class="lead">Their center midfielder. He gets the ball in front of our defense and passes it forward straight away, first time.</p>
+   <div class="blk"><h3>Look for</h3><ul><li>Is #8 getting the ball with nobody near him? That's the problem.</li><li>Johann or Juvens should stay in front of our defense, not run off chasing.</li></ul></div>
+   <div class="word"><b>First time</b> · passing the ball the moment it arrives, without stopping it first.</div>
+   <div class="yell">"Find #8!"<small>or "stay home, 8"</small></div>`},
+ {s:'delay',h:`<span class="kick">Their fast player</span><h2>#18 and the word "delay"</h2>
+   <p class="lead">#18 plays on the side and he is fast. If our defender dives in, #18 just runs past him.</p>
+   <div class="blk"><h3>Look for</h3><ul><li>Our fullback (Diego or Leisson) should back up and stay between #18 and our goal.</li><li>Then a teammate comes to help, and they trap him on the sideline, two against one.</li></ul></div>
+   <div class="word"><b>Fullback</b> · the defender on the side of the back line.</div>
+   <div class="yell">"Delay! Don't dive!"</div>`},
+ {s:'trans',h:`<span class="kick">After we lose the ball</span><h2>Sprint back</h2>
+   <p class="lead">When Dearborn wins the ball, they send 3 or 4 players forward fast and kick it into the space behind our defense.</p>
+   <div class="blk"><h3>Look for</h3><ul><li>The moment we lose the ball: are our players turning and running back, or walking?</li><li>Do our defenders drop back together, or does one get left behind?</li></ul></div>
+   <div class="word"><b>Goal side</b> · standing between the player you're guarding and your own goal.</div>
+   <div class="word"><b>Transition</b> · the few seconds right after the ball changes teams.</div>
+   <div class="yell">"Sprint! Goal side!"</div>`},
+ {s:'pinch',h:`<span class="kick">Our defense</span><h2>Pinch in</h2>
+   <p class="lead">Sometimes a center back steps up to challenge an attacker. That leaves a hole behind him. Everyone else has to slide over to fill it.</p>
+   <div class="blk"><h3>Look for</h3><ul><li>A defender steps up. Do the other three slide toward the middle?</li><li>The winger on the far side should drop back to help.</li></ul></div>
+   <div class="word"><b>Weak side</b> · the side of the field away from the ball.</div>
+   <div class="yell">"Pinch in!"</div>`},
+ {s:'corner',h:`<span class="kick">Their #1 danger</span><h2>Their short corner</h2>
+   <p class="lead">Their best play. Instead of kicking the corner into the box, they pass it short to #8, everyone runs in, and #8 passes it back out for a shot.</p>
+   <div class="blk"><h3>Look for</h3><ul><li>Before every Dearborn corner: is one of ours standing at the top of the box?</li><li>Our defenders should stay touching distance from their runners.</li></ul></div>
+   <div class="word"><b>The 18</b> · the big box in front of the goal (it's 18 yards deep). "Top of the 18" is its front edge.</div>
+   <div class="yell">"Top of the box!"<small>yell it before every corner</small></div>`},
+ {s:'throw',h:`<span class="kick">Their other set piece</span><h2>Their long throw</h2>
+   <p class="lead">They throw it long toward the goal. Three players stand in a line, and the first one heads it on toward the far side.</p>
+   <div class="blk"><h3>Look for</h3><ul><li>Is one of ours at the back post before the throw?</li><li>When the ball gets there, kick it far away. No fancy stuff.</li></ul></div>
+   <div class="word"><b>Back post</b> · the side of the goal farther from the ball. <b>Flick-on</b> · a light header that keeps the ball going.</div>
+   <div class="yell">"Back post! Clear it!"</div>`},
+ {s:'attack',h:`<span class="kick">How we score</span><h2>Wide, then low</h2>
+   <p class="lead">Our plan: get the ball to a winger on the side, run at them, pass it across, and shoot low.</p>
+   <div class="blk"><h3>Look for</h3><ul><li>Are we getting the ball out wide, or forcing it through the crowded middle?</li><li>The winger on the far side should be running in toward the goal.</li><li>Shots should be low, not blasted over the bar.</li></ul></div>
+   <div class="yell">"Wide!" then "Low!"</div>`},
+ {s:null,h:`<span class="kick">At halftime</span><h2>Pick one fix</h2>
+   <p class="lead">Don't give them five things. Pick the one that matches the score.</p>
+   <div class="cards">
+     <div class="c"><b>Tied</b><p>Press harder at chosen moments. Fresh legs on the wings.</p></div>
+     <div class="c"><b>Winning</b><p>Stay compact in the middle. Make them go around us. Counter when there's space.</p></div>
+     <div class="c"><b>Losing</b><p>Wingers push higher and go at them. Press higher up the field. Get it wide fast.</p></div>
+   </div>
+   <div class="blk"><h3>Subs to have ready</h3><ul><li>A fresh winger for the second half.</li><li>A fast fullback if #18 is beating our defender on his side.</li></ul></div>`},
+ {s:null,h:`<span class="kick">Cheat sheet</span><h2>Sideline words</h2>
+   <div class="gloss">
+     <div class="word"><b>Lines!</b> · get back into three tight rows.</div>
+     <div class="word"><b>Delay!</b> · back off, stay between him and our goal, wait for help.</div>
+     <div class="word"><b>Goal side</b> · between your man and our goal.</div>
+     <div class="word"><b>Pinch in</b> · defenders slide toward the middle.</div>
+     <div class="word"><b>Top of the box!</b> · someone stand at the front edge of the big box.</div>
+     <div class="word"><b>Back post</b> · the far side of the goal.</div>
+     <div class="word"><b>Clear it</b> · kick it far away, high and wide.</div>
+     <div class="word"><b>Wide!</b> · pass it out to the side.</div>
+     <div class="word"><b>Low!</b> · keep shots on the ground.</div>
+     <div class="word"><b>Weak side</b> · the side away from the ball.</div>
+     <div class="word"><b>Transition</b> · the seconds after the ball changes teams.</div>
+     <div class="word"><b>Set piece</b> · corners, free kicks, throw-ins.</div>
+   </div>`}
+];
+
+/* ---------- engine ---------- */
+const NS='http://www.w3.org/2000/svg';
+const svg=document.getElementById('svg'),stage=document.getElementById('stage'),capEl=document.getElementById('cap'),pillEl=document.getElementById('pill');
+const scrub=document.getElementById('scrub'),playB=document.getElementById('play'),slowB=document.getElementById('slow');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let cur=0,scene=null,t=0,playing=!reduce,speed=1,last=0,nodes=[],tagEls=[],zoneEls=[],arrowEls=[];
+function el(n,a,p){const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e;}
+function pitch(){
+  svg.innerHTML='';
+  const defs=el('defs',{});
+  [['d','#c8362c'],['f','#e8b931'],['n','#ffffff']].forEach(([id,c])=>{const m=el('marker',{id:'ah'+id,viewBox:'0 0 10 10',refX:'8',refY:'5',markerWidth:'4',markerHeight:'4',orient:'auto-start-reverse'},defs);el('path',{d:'M0,0 L10,5 L0,10 z',fill:c},m);});
+  el('rect',{x:-60,y:-60,width:225,height:190,fill:'#2a7343'});
+  for(let i=0;i<10;i++) if(i%2===0) el('rect',{x:i*10.5,y:0,width:10.5,height:68,fill:'#2f7d4a'});
+  const L={fill:'none',stroke:'rgba(255,255,255,.8)','stroke-width':.35};
+  el('rect',Object.assign({x:0,y:0,width:105,height:68},L));
+  el('line',Object.assign({x1:52.5,y1:0,x2:52.5,y2:68},L));
+  el('circle',Object.assign({cx:52.5,cy:34,r:9.15},L));
+  el('circle',{cx:52.5,cy:34,r:.45,fill:'rgba(255,255,255,.8)'});
+  [[0,1],[105,-1]].forEach(([gx,s])=>{
+    el('rect',Object.assign({x:s>0?0:105-16.5,y:13.84,width:16.5,height:40.32},L));
+    el('rect',Object.assign({x:s>0?0:105-5.5,y:24.84,width:5.5,height:18.32},L));
+    el('circle',{cx:gx+s*11,cy:34,r:.45,fill:'rgba(255,255,255,.8)'});
+    el('path',Object.assign({d:s>0?'M16.5,26.7 A9.15,9.15 0 0 1 16.5,41.3':'M88.5,26.7 A9.15,9.15 0 0 0 88.5,41.3'},L));
+    el('rect',{x:s>0?-2:105,y:30.34,width:2,height:7.32,fill:'rgba(255,255,255,.25)',stroke:'rgba(255,255,255,.85)','stroke-width':.3});
+  });
+  return defs;
+}
+const ease=x=>x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2;
+function pos(k,tt){if(tt<=k[0][0])return[k[0][1],k[0][2]];for(let i=1;i<k.length;i++){if(tt<=k[i][0]){const a=k[i-1],b=k[i],u=ease((tt-a[0])/((b[0]-a[0])||1));return[a[1]+(b[1]-a[1])*u,a[2]+(b[2]-a[2])*u];}}const z=k[k.length-1];return[z[1],z[2]];}
+function load(name){
+  scene=SC[name];nodes=[];tagEls.forEach(x=>x.d.remove());tagEls=[];zoneEls=[];arrowEls=[];
+  pitch();
+  const v=scene.view;svg.setAttribute('viewBox',v.join(' '));
+  const ratio=v[2]/v[3];stage.style.aspectRatio=v[2]+' / '+v[3];stage.style.width='min(100%, calc(60vh * '+ratio.toFixed(3)+'))';
+  (scene.zones||[]).forEach(z=>{const [a,b,type,x,y,w,h,c]=z;const col=c==='d'?'rgba(200,54,44,':'rgba(232,185,49,';
+    const e=type==='rect'?el('rect',{x,y,width:w,height:h,rx:1,fill:col+'.22)',stroke:col+'.9)','stroke-width':.35,'stroke-dasharray':'1 .8'}):el('circle',{cx:x,cy:y,r:w,fill:col+'.22)',stroke:col+'.9)','stroke-width':.35,'stroke-dasharray':'1 .8'});
+    zoneEls.push({a,b,e});});
+  (scene.arrows||[]).forEach(r=>{const [a,b,x1,y1,x2,y2,c]=r;const col=c==='d'?'#c8362c':c==='f'?'#e8b931':'#ffffff';
+    const e=el('line',{x1,y1,x2,y2,stroke:col,'stroke-width':.6,'stroke-linecap':'round','marker-end':'url(#ah'+(c||'n')+')',pathLength:1,'stroke-dasharray':'1 1','stroke-dashoffset':1,opacity:0});
+    arrowEls.push({a,b,e});});
+  scene.ents.forEach(en=>{const g=el('g',{});
+    if(en.t==='b'){el('circle',{r:1.05,fill:'#ffffff',stroke:'#1a1a1a','stroke-width':.3},g);}
+    else{el('circle',{r:2.15,fill:en.t==='f'?'#e8b931':'#c8362c',stroke:en.t==='f'?'#5a4200':'#5a120d','stroke-width':.3},g);
+      if(en.n)el('text',{y:.78,'text-anchor':'middle','font-size':en.n.length>1?1.9:2.2,'font-weight':700,'font-family':'Barlow, Arial, sans-serif',fill:en.t==='f'?'#1c1400':'#ffffff'},g).textContent=en.n;}
+    nodes.push({en,g});});
+  // ball on top
+  nodes.filter(n=>n.en.t==='b').forEach(n=>svg.appendChild(n.g));
+  (scene.tags||[]).forEach(tg=>{const [a,b,txt,x,y,c]=tg;const d=document.createElement('div');d.className='tag'+(c?' '+c:'');d.textContent=txt;
+    d.style.left=((x-v[0])/v[2]*100)+'%';d.style.top=((y-v[1])/v[3]*100)+'%';stage.appendChild(d);tagEls.push({a,b,d});});
+  scrub.max=scene.dur;t=reduce?(scene.still||scene.dur*.6):0;render();
+}
+function render(){
+  if(!scene)return;
+  nodes.forEach(({en,g})=>{const [x,y]=pos(en.k,t);g.setAttribute('transform','translate('+x.toFixed(2)+' '+y.toFixed(2)+')');g.style.opacity=(en.in!=null&&t<en.in)?0:1;});
+  zoneEls.forEach(z=>z.e.style.opacity=(t>=z.a&&t<=z.b)?1:0);
+  arrowEls.forEach(r=>{const on=t>=r.a&&t<=r.b;r.e.setAttribute('opacity',on?.95:0);r.e.setAttribute('stroke-dashoffset',on?Math.max(0,1-(t-r.a)/.7):1);});
+  tagEls.forEach(x=>x.d.classList.toggle('on',t>=x.a&&t<=x.b));
+  let c='';(scene.cap||[]).forEach(([ct,tx])=>{if(t>=ct)c=tx;});if(capEl.textContent!==c)capEl.textContent=c;
+  let p=null;(scene.pills||[]).forEach(pp=>{if(t>=pp[0]&&t<=pp[1])p=pp;});
+  if(p){pillEl.className='pill on '+p[2];pillEl.textContent=p[3];}else pillEl.className='pill';
+  scrub.value=t;
+}
+function frame(ts){const dt=last?Math.min(.1,(ts-last)/1000):0;last=ts;
+  if(playing&&scene){t+=dt*speed;if(t>scene.dur+.8)t=0;render();}
+  requestAnimationFrame(frame);}
+requestAnimationFrame(frame);
+
+const textEl=document.getElementById('text'),dotsEl=document.getElementById('dots'),countEl=document.getElementById('count'),stagecol=document.getElementById('stagecol'),slideEl=document.getElementById('slide');
+SL.forEach((s,i)=>{const b=document.createElement('button');b.setAttribute('aria-label','Slide '+(i+1));b.onclick=()=>go(i);dotsEl.appendChild(b);});
+function go(i){
+  cur=Math.max(0,Math.min(SL.length-1,i));const s=SL[cur];
+  textEl.innerHTML=s.h;
+  if(s.s){stagecol.hidden=false;slideEl.style.gridTemplateColumns='';load(s.s);}else{stagecol.hidden=true;scene=null;slideEl.style.gridTemplateColumns='minmax(0,1fr)';}
+  [...dotsEl.children].forEach((b,j)=>b.setAttribute('aria-current',j===cur));
+  countEl.textContent=(cur+1)+' / '+SL.length;
+  document.getElementById('prev').disabled=cur===0;document.getElementById('next').disabled=cur===SL.length-1;
+  try{localStorage.setItem('dearborn-slide',cur);}catch(e){}
+  window.scrollTo({top:0,behavior:reduce?'auto':'smooth'});
+}
+function setPlay(v){playing=v;playB.textContent=v?'Pause':'Play';playB.setAttribute('aria-pressed',String(!v));}
+playB.onclick=()=>setPlay(!playing);
+document.getElementById('replay').onclick=()=>{t=0;setPlay(true);render();};
+slowB.onclick=()=>{speed=speed===1?.45:1;slowB.setAttribute('aria-pressed',String(speed!==1));};
+scrub.oninput=()=>{t=parseFloat(scrub.value);setPlay(false);render();};
+document.getElementById('prev').onclick=()=>go(cur-1);
+document.getElementById('next').onclick=()=>go(cur+1);
+addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;
+  if(e.key==='ArrowRight')go(cur+1);else if(e.key==='ArrowLeft')go(cur-1);else if(e.key===' '){e.preventDefault();setPlay(!playing);}});
+let sx=null;slideEl.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;},{passive:true});
+slideEl.addEventListener('touchend',e=>{if(sx==null)return;const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>70&&!e.target.closest('.ctrl'))go(cur+(dx<0?1:-1));sx=null;});
+let start=0;try{start=parseInt(localStorage.getItem('dearborn-slide')||'0',10)||0;}catch(e){}
+setPlay(playing);go(start);
+})();
+</script>
+</body>
+</html>
