@@ -63,12 +63,48 @@ section h3{margin-top:22px}
 .flow li:last-child{border-bottom:0}
 .flow .when{flex:0 0 110px;font-weight:800;color:var(--green)}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .flow .when{color:#7DDB9A} }
+.corner{width:100%;height:900px;border:0;border-radius:12px;background:#F5F3EC;display:block}
+.open{display:inline-block;margin-top:10px;background:var(--green);color:#fff;font-weight:800;text-decoration:none;border-radius:10px;padding:10px 16px}
 .chant{text-align:center;font-size:26px;font-weight:900;letter-spacing:1px;color:#fff;background:var(--green);border-radius:16px;padding:18px 12px;margin:16px 0}
 .chant small{display:block;font-size:15px;font-weight:600;letter-spacing:0;opacity:.9}
 details{background:var(--bg);border-radius:12px;padding:12px 14px;margin:8px 0}
 summary{font-weight:700;cursor:pointer}
 details p{margin:8px 0 0;color:var(--green);font-weight:700}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) details p{color:#7DDB9A} }
+/* Team board */
+.board-gate,.board-form{background:var(--bg);border-radius:14px;padding:14px;margin:10px 0}
+.board label{display:block;font-size:14px;font-weight:700;margin:0 0 6px}
+.board input[type=text],.board input[type=password],.board textarea{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:12px;padding:12px 14px;-webkit-appearance:none;appearance:none}
+.board textarea{min-height:110px;resize:vertical;line-height:1.45}
+.board input:focus,.board textarea:focus{outline:none;border-color:var(--us)}
+.row2{display:flex;gap:8px;align-items:stretch}
+.row2 input{flex:1;min-width:0}
+.bbtn{flex:0 0 auto;font:inherit;font-size:16px;font-weight:800;border:0;border-radius:12px;padding:12px 20px;background:var(--green);color:#fff;cursor:pointer;min-height:48px;touch-action:manipulation}
+.bbtn:disabled{opacity:.55;cursor:default}
+.cats{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+.cat{font:inherit;font-size:15px;font-weight:700;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:9px 14px;cursor:pointer;min-height:44px;touch-action:manipulation}
+.cat[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .cat[aria-pressed="true"]{color:#0E1622} }
+.meta{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+.count{font-size:13px;color:var(--soft)}
+.count.over{color:var(--them);font-weight:700}
+.bmsg{min-height:22px;font-size:14px;font-weight:700;margin-top:8px}
+.bmsg.ok{color:var(--green)} .bmsg.err{color:var(--them)}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .bmsg.ok{color:#7DDB9A} }
+.feed-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:18px 0 8px;flex-wrap:wrap}
+.feed-head h3{margin:0}
+.ftabs{display:flex;gap:6px;flex-wrap:wrap}
+.ftabs button{font:inherit;font-size:13px;font-weight:700;border:1px solid var(--line);background:var(--card);color:var(--soft);border-radius:999px;padding:6px 11px;cursor:pointer;min-height:36px}
+.ftabs button[aria-pressed="true"]{color:var(--ink);border-color:var(--ink)}
+.feed{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.post{background:var(--bg);border-radius:12px;padding:12px 14px;border-left:5px solid var(--soft)}
+.post.dearborn{border-left-color:var(--them)} .post.system{border-left-color:var(--us)}
+.post .who{font-size:13px;color:var(--soft);display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:4px}
+.post .pill{font-size:11px;font-weight:900;letter-spacing:.5px;color:#fff;border-radius:999px;padding:2px 8px;background:var(--soft)}
+.post.dearborn .pill{background:var(--them)} .post.system .pill{background:var(--us)}
+.post .txt{white-space:pre-wrap;overflow-wrap:anywhere;margin:0}
+.post.mine{outline:2px dashed var(--line)}
+.lock{font-size:14px;color:var(--soft);margin:6px 0 0}
 footer{text-align:center;color:var(--soft);font-size:13px;padding:10px 16px 30px}
 </style>
 </head>
@@ -91,6 +127,8 @@ footer{text-align:center;color:var(--soft);font-size:13px;padding:10px 16px 30px
   <a href="#score">We attack</a>
   <a href="#flow">Game flow</a>
   <a href="#quiz">Quiz</a>
+  <a href="#beni">Beni's Corner</a>
+  <a href="#board">Team board</a>
 </nav>
 
 <main>
@@ -260,7 +298,168 @@ footer{text-align:center;color:var(--soft);font-size:13px;padding:10px 16px 30px
   <details><summary>What can't happen in the first 10 minutes?</summary><p>A goal against us.</p></details>
 </section>
 
+<section id="board" class="board">
+  <h2><span class="n">9</span>Team board</h2>
+  <p class="cap" style="margin:0 0 6px">What do you know about Dearborn? What should we remember about our system? Post it here. Coach reads this every hour and updates the page.</p>
+
+  <div class="board-gate" id="gate">
+    <label for="codeIn">Team code</label>
+    <form class="row2" id="gateForm" autocomplete="off">
+      <input type="password" id="codeIn" inputmode="text" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="go" placeholder="Ask Coach English" aria-describedby="gateMsg">
+      <button class="bbtn" type="submit" id="gateBtn">Enter</button>
+    </form>
+    <div class="bmsg" id="gateMsg" role="status" aria-live="polite"></div>
+    <p class="lock">Only our team can read or post. Keep it about soccer and keep it clean.</p>
+  </div>
+
+  <div id="boardIn" hidden>
+    <form class="board-form" id="postForm" autocomplete="off" novalidate>
+      <div class="cats" role="group" aria-label="What is it about?">
+        <button type="button" class="cat" data-cat="dearborn" aria-pressed="true">About Dearborn</button>
+        <button type="button" class="cat" data-cat="system" aria-pressed="false">Our system</button>
+        <button type="button" class="cat" data-cat="other" aria-pressed="false">Other</button>
+      </div>
+      <label for="nameIn">Your first name or number (optional)</label>
+      <input type="text" id="nameIn" maxlength="24" autocomplete="off" autocapitalize="words" enterkeyhint="next" placeholder="e.g. Jayc or #10" style="margin-bottom:12px">
+      <label for="textIn">Your message</label>
+      <textarea id="textIn" maxlength="500" rows="4" autocapitalize="sentences" enterkeyhint="enter" placeholder="e.g. Their #18 is fast but only goes right."></textarea>
+      <div class="meta">
+        <span class="count" id="count">0 / 500</span>
+        <button class="bbtn" type="submit" id="postBtn">Post</button>
+      </div>
+      <div class="bmsg" id="postMsg" role="status" aria-live="polite"></div>
+    </form>
+
+    <div class="feed-head">
+      <h3>What the team is saying</h3>
+      <div class="ftabs" role="group" aria-label="Show">
+        <button type="button" data-f="all" aria-pressed="true">All</button>
+        <button type="button" data-f="dearborn" aria-pressed="false">Dearborn</button>
+        <button type="button" data-f="system" aria-pressed="false">Our system</button>
+      </div>
+    </div>
+    <ul class="feed" id="feed" aria-live="polite"></ul>
+  </div>
+</section>
+
+<section id="beni">
+  <h2><span class="n">9</span>Beni's Strategy Corner</h2>
+  <p class="cap" style="margin:0 0 8px">Notes and whiteboards from Coach Beni. Newest on top.</p>
+  <iframe class="corner" src="https://script.google.com/macros/s/AKfycbxFl7xVIn1jcIZA2dfz5-ZtvhMIdGxzvifCeqp7bP3t0VWzkQ5Tsz3SKGXEDKCy6XBr2Q/exec" title="Beni's Strategy Corner" loading="lazy"></iframe>
+  <a class="open" href="https://script.google.com/macros/s/AKfycbxFl7xVIn1jcIZA2dfz5-ZtvhMIdGxzvifCeqp7bP3t0VWzkQ5Tsz3SKGXEDKCy6XBr2Q/exec" target="_blank" rel="noopener">Open Beni's Strategy Corner full screen</a>
+</section>
+
 </main>
 <footer>Fenway Boys Soccer &middot; 2026 MIAA D5 Tournament</footer>
+<script>
+(function(){
+  // Back end: Apps Script web app (zach-inbox/Fenway High/Soccer/team-board/Code.gs)
+  var BOARD_URL = "";
+  var $ = function(id){ return document.getElementById(id); };
+  function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+  function lsSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+  var code = lsGet("kd-code") || "", cat = "dearborn", filter = "all", posts = [], busy = false, timer = null;
+  var client = lsGet("kd-client");
+  if(!client){ client = Math.random().toString(36).slice(2,12); lsSet("kd-client", client); }
+  var mine = {}; try{ mine = JSON.parse(lsGet("kd-mine") || "{}"); }catch(e){ mine = {}; }
+  var LABEL = {dearborn:"DEARBORN", system:"OUR SYSTEM", other:"OTHER"};
+  var ERR = {code:"That code isn't right. Ask Coach English.", empty:"Type a message first.", long:"Too long. Keep it under 500 characters.",
+    clean:"Keep it clean. Change a word and try again.", slow:"Slow down a second, then post again.", server:"The board had a problem. Try again.", net:"Couldn't reach the board. Check your Wi-Fi and try again. Your message is still here."};
+
+  function call(params){
+    if(!BOARD_URL) return Promise.reject(new Error("nourl"));
+    var q = new URLSearchParams(params); q.set("code", code); q.set("_", Date.now());
+    var ctl = ("AbortController" in window) ? new AbortController() : null;
+    var to = setTimeout(function(){ if(ctl) ctl.abort(); }, 15000);
+    return fetch(BOARD_URL + "?" + q.toString(), {method:"GET", redirect:"follow", cache:"no-store", signal: ctl ? ctl.signal : undefined})
+      .then(function(r){ clearTimeout(to); if(!r.ok) throw new Error("http"); return r.json(); })
+      .catch(function(e){ clearTimeout(to); throw e; });
+  }
+  function esc(s){ return String(s == null ? "" : s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+  function ago(iso){
+    var d = new Date(iso), s = (Date.now() - d) / 1000;
+    if(isNaN(d)) return "";
+    if(s < 60) return "just now"; if(s < 3600) return Math.floor(s/60) + " min ago";
+    if(s < 86400) return Math.floor(s/3600) + " hr ago";
+    return d.toLocaleDateString("en-US", {month:"short", day:"numeric"});
+  }
+  function render(){
+    var list = posts.filter(function(p){ return filter === "all" || p.cat === filter; });
+    $("feed").innerHTML = list.length ? list.map(function(p){
+      return '<li class="post ' + esc(p.cat) + (mine[p.id] ? ' mine' : '') + '"><div class="who"><span class="pill">' + (LABEL[p.cat] || "OTHER") + '</span><b>' + esc(p.name || "Teammate") + '</b><span>' + ago(p.t) + '</span></div><p class="txt">' + esc(p.text) + '</p></li>';
+    }).join("") : '<li class="cap">Nothing here yet. Be the first to post.</li>';
+  }
+  function load(quiet){
+    return call({action:"list"}).then(function(r){
+      if(!r.ok){ if(r.error === "code"){ lock(ERR.code); } return; }
+      posts = r.posts || []; render();
+    }).catch(function(){ if(!quiet) $("postMsg").textContent = ""; });
+  }
+  function unlock(){
+    $("gate").hidden = true; $("boardIn").hidden = false; render(); load();
+    clearInterval(timer); timer = setInterval(function(){ if(!document.hidden) load(true); }, 30000);
+  }
+  function lock(msg){
+    code = ""; lsSet("kd-code", ""); $("gate").hidden = false; $("boardIn").hidden = true; clearInterval(timer);
+    $("gateMsg").className = "bmsg err"; $("gateMsg").textContent = msg || "";
+  }
+
+  // Gate
+  $("gateForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var c = $("codeIn").value.trim();
+    if(!c){ $("gateMsg").className = "bmsg err"; $("gateMsg").textContent = "Type the team code."; return; }
+    if(!BOARD_URL){ $("gateMsg").className = "bmsg err"; $("gateMsg").textContent = "The board opens soon."; return; }
+    $("gateBtn").disabled = true; $("gateMsg").className = "bmsg"; $("gateMsg").textContent = "Checking...";
+    code = c;
+    call({action:"list"}).then(function(r){
+      $("gateBtn").disabled = false;
+      if(r.ok){ lsSet("kd-code", c); posts = r.posts || []; $("gateMsg").textContent = ""; $("codeIn").blur(); unlock(); }
+      else { code = ""; $("gateMsg").className = "bmsg err"; $("gateMsg").textContent = ERR[r.error] || ERR.server; }
+    }).catch(function(){ code = ""; $("gateBtn").disabled = false; $("gateMsg").className = "bmsg err"; $("gateMsg").textContent = ERR.net; });
+  });
+
+  // Categories and filters
+  document.querySelector(".cats").addEventListener("click", function(e){
+    var b = e.target.closest("[data-cat]"); if(!b) return; cat = b.getAttribute("data-cat");
+    [].forEach.call(document.querySelectorAll(".cat"), function(x){ x.setAttribute("aria-pressed", x === b); });
+  });
+  document.querySelector(".ftabs").addEventListener("click", function(e){
+    var b = e.target.closest("[data-f]"); if(!b) return; filter = b.getAttribute("data-f");
+    [].forEach.call(document.querySelectorAll(".ftabs button"), function(x){ x.setAttribute("aria-pressed", x === b); }); render();
+  });
+
+  // Text box: counter, draft saved on this device, Ctrl/Cmd+Enter posts on a Chromebook or laptop
+  var ta = $("textIn");
+  ta.value = lsGet("kd-draft") || ""; $("nameIn").value = lsGet("kd-name") || "";
+  function count(){ var n = ta.value.length; $("count").textContent = n + " / 500"; $("count").className = "count" + (n > 480 ? " over" : ""); }
+  count();
+  ta.addEventListener("input", function(){ count(); lsSet("kd-draft", ta.value); });
+  ta.addEventListener("keydown", function(e){ if(e.key === "Enter" && (e.ctrlKey || e.metaKey)){ e.preventDefault(); $("postForm").requestSubmit ? $("postForm").requestSubmit() : $("postBtn").click(); } });
+  $("nameIn").addEventListener("keydown", function(e){ if(e.key === "Enter"){ e.preventDefault(); ta.focus(); } });
+
+  $("postForm").addEventListener("submit", function(e){
+    e.preventDefault(); if(busy) return;
+    var text = ta.value.trim(), name = $("nameIn").value.trim();
+    var m = $("postMsg");
+    if(!text){ m.className = "bmsg err"; m.textContent = ERR.empty; ta.focus(); return; }
+    busy = true; $("postBtn").disabled = true; $("postBtn").textContent = "Posting..."; m.className = "bmsg"; m.textContent = "";
+    lsSet("kd-name", name);
+    call({action:"post", text:text, name:name, cat:cat, client:client}).then(function(r){
+      if(r.ok){
+        mine[r.post.id] = 1; lsSet("kd-mine", JSON.stringify(mine));
+        posts.unshift(r.post); ta.value = ""; lsSet("kd-draft", ""); count(); render();
+        m.className = "bmsg ok"; m.textContent = "Posted. Thanks!";
+        setTimeout(function(){ if(m.textContent === "Posted. Thanks!") m.textContent = ""; }, 4000);
+      } else if(r.error === "code"){ lock(ERR.code); }
+      else { m.className = "bmsg err"; m.textContent = ERR[r.error] || ERR.server; }
+    }).catch(function(){ m.className = "bmsg err"; m.textContent = ERR.net; })
+    .then(function(){ busy = false; $("postBtn").disabled = false; $("postBtn").textContent = "Post"; });
+  });
+
+  document.addEventListener("visibilitychange", function(){ if(!document.hidden && code && !$("boardIn").hidden) load(true); });
+  if(code && BOARD_URL) unlock();
+})();
+</script>
 </body>
 </html>
